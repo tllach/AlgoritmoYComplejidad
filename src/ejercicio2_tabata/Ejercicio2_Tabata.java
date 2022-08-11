@@ -24,6 +24,9 @@ public class Ejercicio2_Tabata {
     static int[] rand;
     static ListaEnlazada key;
     static ListaEnlazada value;
+    static int expo;
+    static int time;
+    static int comp;
     
     /*
         * Algorithms and Programming II                             April 25, 2022
@@ -57,14 +60,27 @@ public class Ejercicio2_Tabata {
      */
     
     public static void main(String[] args) {
-        create();	// creates a file
-        write();	// writes random numbers to the file
-        read();	// reads random numbers in the file
-        readIntoArray();// reads random numbers into array
-        printCountOfDuplicate(); //print the count of duplicate
+        expo = 4;
+        for(int i = 0; i <= 10; i++){
+            //se debe guardar los valores n, comp y tiempo por cada set de n despues de las repeticiones 
+            String fileResult = i + "_case.txt"; 
+            prepareFileOfResult(fileResult);
+            for(int j = 0; j <= 200; j++){ //200 repiticiones por tamaño
+                create();	// creates a file
+                write();	// writes random numbers to the file
+                read();	// reads random numbers in the file
+                readIntoArray();// reads random numbers into array
+                printCountOfDuplicate(); //print the count of duplicate
+            }
+            expo++;
+        }
         return;
     }
 
+    private static void prepareFileOfResult(String nameFile){
+        
+    } 
+     
     private static void create() {
     // creates a file with given name `filename'
         try {
@@ -97,12 +113,16 @@ public class Ejercicio2_Tabata {
             // creates new PrintWriter object for writing file
             PrintWriter out = new PrintWriter(filename);
 
-            int n = 30;
+            int n = (int) Math.pow(2,expo);
             // creates random number generator object
             Random rand = new Random();
             String msg = "writing %d random numbers ... ";
             System.out.printf(msg, n);
-            // writes random integers in the range [0, 256)
+            // writes random integers in the range [0, 11)
+            //LO QUE SE NECESITA CAMBIAR PARA LOS CASOS
+            //best case_: poner condicion que sea el mismo primer numero que se genere
+            //worst case: poner condiciuon que sean todos los nros diferentes
+            //average case: no poner condicion
             for (int i = 0; i != n; ++i) {
                 out.printf("%d\n", rand.nextInt(11));
             }
@@ -194,7 +214,6 @@ public class Ejercicio2_Tabata {
 
     private static int lines(String filename){
     // counts number of lines (or records) in a file
-
         int count = 0;
         // creates a File object
         File f = new File(filename);
@@ -212,11 +231,13 @@ public class Ejercicio2_Tabata {
             System.out.println("IO Error:");
             err.printStackTrace();
         }
-
         return count;
     }
 
     private static void printCountOfDuplicate(){
+        
+        //aqui se empezaria a correr el tiempo porque no sinteresa saber cuanto se demora contando duplicados
+        
         key = new ListaEnlazada();
         value = new ListaEnlazada();
         for(int i = 0; i < rand.length; i++){
@@ -232,10 +253,6 @@ public class Ejercicio2_Tabata {
                 //si encuentra un nro repetido suma 1 en el mismo index de el key en value
                 value.set(index, value.get(index) + 1);
             }
-        }
-        for(int i = 0; i < key.size(); i++){
-            System.out.println("-Number: " + key.get(i)  + 
-                    "  -Veces Repetidas: " + value.get(i));
         }
     }
     

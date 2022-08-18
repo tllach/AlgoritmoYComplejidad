@@ -26,7 +26,7 @@ public class Ejercicio2_Tabata {
     static ListaEnlazada value;
     static int n;
     static int expo;
-    static long time;
+    static double time;
     static long comp;
     static int cases;
     static String fileCase;
@@ -63,26 +63,25 @@ public class Ejercicio2_Tabata {
         * [7] www.javatpoint.com/post/java-random
         *
      */
-    
-    public static void main(String[] args) throws FileNotFoundException {
-        
+   public static void main(String[] args) throws FileNotFoundException {
+        repeticiones = 50; 
         //se debe guardar los valores n, comp y tiempo por cada set de n despues de las repeticiones 
         for(cases = 0; cases < 3; cases++){
             changeFileName(cases);
             create(fileCase); //crear los archivos que va a guardar los valores necesarios para la grafica
             PrintWriter out = new PrintWriter(fileCase);
-            for(expo = 4; expo < 15; expo++){ //para crear valores de n desde 2^4 hasta 2^12
+            for(expo = 4; expo < 15; expo++){ //para crear valores de n desde 2^4 hasta 2^14
                 time = 0;
                 comp = 0;
-                for(int j = 0; j < 200; j++){ //200 repiticiones por tamaño
+                for(int j = 0; j < repeticiones; j++){ //200 repiticiones por tamaño
                     create("random.txt");	// creates a file
                     write();	// writes random numbers to the file
                     readIntoArray();// reads random numbers into array
                     printCountOfDuplicate(); //print the count of duplicate
                     time = time + elapsedTime;
                 }
-                time = time / 200;
-                comp = comp / 200;
+                time = time / repeticiones;
+                comp = comp / repeticiones;
                 String line =  n + " " + comp + " " +  time;
                 out.println(line);
             }

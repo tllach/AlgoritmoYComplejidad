@@ -64,18 +64,19 @@ public class Ejercicio2_Tabata {
         *
      */
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+        
         //se debe guardar los valores n, comp y tiempo por cada set de n despues de las repeticiones 
-        for(cases = 1; cases < 3; cases++){
-            //ubicar esto mejor
-            create(fileCase); //crear el archivo que va a guardar los valores necesarios para la grafica
-            for(expo = 4; expo < 10; expo++){ //para crear valores de n desde 2^4 hasta 2^12
+        for(cases = 0; cases < 3; cases++){
+            changeFileName(cases);
+            create(fileCase); //crear los archivos que va a guardar los valores necesarios para la grafica
+            PrintWriter out = new PrintWriter(fileCase);
+            for(expo = 4; expo < 15; expo++){ //para crear valores de n desde 2^4 hasta 2^12
                 time = 0;
                 comp = 0;
                 for(int j = 0; j < 200; j++){ //200 repiticiones por tamaño
                     create("random.txt");	// creates a file
                     write();	// writes random numbers to the file
-                    //read();	// reads random numbers in the file
                     readIntoArray();// reads random numbers into array
                     printCountOfDuplicate(); //print the count of duplicate
                     time = time + elapsedTime;
@@ -83,9 +84,9 @@ public class Ejercicio2_Tabata {
                 time = time / 200;
                 comp = comp / 200;
                 String line =  n + " " + comp + " " +  time;
-                
+                out.println(line);
             }
-            
+            out.close();
             expo = 0;
         }
         
@@ -94,6 +95,20 @@ public class Ejercicio2_Tabata {
         return;
     }
      
+    private static void changeFileName(int i){
+        switch(i){
+            case 0:
+                fileCase = "bestCase.txt";
+                break;
+            case 1:
+                fileCase = "worstCase.txt";
+                break;
+            case 2:
+                fileCase = "averageCase.txt";
+                break;
+        }
+    }
+    
     private static void create(String fname) {
     // creates a file with given name `filename'
         try {

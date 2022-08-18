@@ -24,9 +24,14 @@ public class Ejercicio2_Tabata {
     static int[] rand;
     static ListaEnlazada key;
     static ListaEnlazada value;
+    static int n;
     static int expo;
-    static int time;
-    static int comp;
+    static long time;
+    static long comp;
+    static int cases;
+    static String fileCase;
+    static long elapsedTime;  //references: https://stackify.com/heres-how-to-calculate-elapsed-time-in-java/
+    
     
     /*
         * Algorithms and Programming II                             April 25, 2022
@@ -60,32 +65,38 @@ public class Ejercicio2_Tabata {
      */
     
     public static void main(String[] args) {
-        expo = 4;
-        for(int i = 0; i <= 10; i++){
-            //se debe guardar los valores n, comp y tiempo por cada set de n despues de las repeticiones 
-            String fileResult = i + "_case.txt"; 
-            prepareFileOfResult(fileResult);
-            for(int j = 0; j <= 200; j++){ //200 repiticiones por tamaño
-                create();	// creates a file
-                write();	// writes random numbers to the file
-                read();	// reads random numbers in the file
-                readIntoArray();// reads random numbers into array
-                printCountOfDuplicate(); //print the count of duplicate
+        //se debe guardar los valores n, comp y tiempo por cada set de n despues de las repeticiones 
+        for(cases = 1; cases < 3; cases++){
+            //ubicar esto mejor
+            create(fileCase); //crear el archivo que va a guardar los valores necesarios para la grafica
+            for(expo = 4; expo < 10; expo++){ //para crear valores de n desde 2^4 hasta 2^12
+                time = 0;
+                comp = 0;
+                for(int j = 0; j < 200; j++){ //200 repiticiones por tamaño
+                    create("random.txt");	// creates a file
+                    write();	// writes random numbers to the file
+                    //read();	// reads random numbers in the file
+                    readIntoArray();// reads random numbers into array
+                    printCountOfDuplicate(); //print the count of duplicate
+                    time = time + elapsedTime;
+                }
+                time = time / 200;
+                comp = comp / 200;
+                String line =  n + " " + comp + " " +  time;
+                
             }
-            expo++;
+            
+            expo = 0;
         }
+        
+        
+        
         return;
     }
-
-    private static void prepareFileOfResult(String nameFile){
-        
-    } 
      
-    private static void create() {
+    private static void create(String fname) {
     // creates a file with given name `filename'
         try {
-            // defines the filename
-            String fname = "random.txt";
             // creates a new File object
             File f = new File(fname);
 
@@ -113,18 +124,29 @@ public class Ejercicio2_Tabata {
             // creates new PrintWriter object for writing file
             PrintWriter out = new PrintWriter(filename);
 
-            int n = (int) Math.pow(2,expo);
+            n = (int) Math.pow(2, Ejercicio2_Tabata.expo);
             // creates random number generator object
             Random rand = new Random();
             String msg = "writing %d random numbers ... ";
             System.out.printf(msg, n);
-            // writes random integers in the range [0, 11)
-            //LO QUE SE NECESITA CAMBIAR PARA LOS CASOS
-            //best case_: poner condicion que sea el mismo primer numero que se genere
-            //worst case: poner condiciuon que sean todos los nros diferentes
-            //average case: no poner condicion
+            
             for (int i = 0; i != n; ++i) {
-                out.printf("%d\n", rand.nextInt(11));
+                int number = -1;
+                switch(cases){
+                    case 0: //best case: all numbers are equal
+                        number = 1;
+                        fileCase = "bestCase.txt";
+                        break;
+                    case 1: //worst case: all numbers are different
+                        number = i;
+                        fileCase = "worstCase.txt";
+                        break;
+                    case 2: // average case
+                        number = rand.nextInt(n);
+                        fileCase = "averageCase.txt";
+                        break;
+                }
+                out.printf("%d\n", number);
             }
 
             System.out.println("done");
@@ -195,13 +217,7 @@ public class Ejercicio2_Tabata {
                 ++count;
             }
 
-            System.out.printf("\nrandom numbers in array:\n");
-            for (int i = 0; i != size; ++i) {
-                System.out.printf("%2d %4d\n", i, rand[i]);
-            }
 
-            String msg = "array stores %d random numbers\n";
-            System.out.printf(msg, count);
 
         } catch (FileNotFoundException err) {
             // complains if file does not exist
@@ -234,18 +250,18 @@ public class Ejercicio2_Tabata {
         return count;
     }
 
-    private static void printCountOfDuplicate(){
-        
-        //aqui se empezaria a correr el tiempo porque no sinteresa saber cuanto se demora contando duplicados
-        
+    private static void printCountOfDuplicate(){        
         key = new ListaEnlazada();
         value = new ListaEnlazada();
+        
+        long start = System.nanoTime();
         for(int i = 0; i < rand.length; i++){
             int index = findIndexNumber(rand[i]);
             if(index == -1){
                 //agrega el nro a la lista key
                 Nodo n = new Nodo(rand[i]);
                 key.insert(n);
+                comp = comp + key.size();
                 //agrega un uno a la lista value
                 Nodo n2 = new Nodo(1);
                 value.insert(n2);
@@ -254,15 +270,18 @@ public class Ejercicio2_Tabata {
                 value.set(index, value.get(index) + 1);
             }
         }
+        long end = System.nanoTime();
+        elapsedTime = end - start; 
     }
     
     private static int findIndexNumber(int number){
         int arraySize = key.size();
         for(int i = 0; i < arraySize; i++){
             if(key.get(i) == number){
+                comp = comp + 1;
                 return i;
             }
-        }
+        } 
         return -1;
     }
     

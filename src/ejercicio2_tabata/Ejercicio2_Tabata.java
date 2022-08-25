@@ -2,12 +2,12 @@ package ejercicio2_tabata;
 
 /**
  *
- * @author tllach
+ * @author tllach, jkdiaz
  * Course name: Algoritmo y complejidad IST4310
- * Student name: Tabata
+ * Student name: Tabata Llach Bruges, Katy Diaz
  * ID: 200149846
- * Name Actividad: Workshop 2: Counting Duplicates in a Plain Text File
- * Date: 05/08/2022
+ * Name Actividad: Workshop 3: Counting Duplicates in a Plain Text File
+ * Date: 20/08/2022
  * Descprition: Es un programa que, luego de algunas operaciones se obtiene un array con n numeros 
  *              random, cuenta las veces que se repite el nro.
  * 
@@ -26,11 +26,13 @@ public class Ejercicio2_Tabata {
     static ListaEnlazada value;
     static int n;
     static int expo;
+    static int limiteExpo;
     static double time;
     static long comp;
     static int cases;
+    static int repeticiones;
     static String fileCase;
-    static long elapsedTime;  //references: https://stackify.com/heres-how-to-calculate-elapsed-time-in-java/
+    static long elapsedTime;  //References: https://stackify.com/heres-how-to-calculate-elapsed-time-in-java/
     
     
     /*
@@ -64,20 +66,21 @@ public class Ejercicio2_Tabata {
         *
      */
    public static void main(String[] args) throws FileNotFoundException {
-        repeticiones = 50; 
+        repeticiones = 500; //valor inicial para el best case
+        limiteExpo = 19; //hasta donde llegara el n^expo
         //se debe guardar los valores n, comp y tiempo por cada set de n despues de las repeticiones 
         for(cases = 0; cases < 3; cases++){
             changeFileName(cases);
             create(fileCase); //crear los archivos que va a guardar los valores necesarios para la grafica
             PrintWriter out = new PrintWriter(fileCase);
-            for(expo = 4; expo < 15; expo++){ //para crear valores de n desde 2^4 hasta 2^14
+            for(expo = 4; expo < limiteExpo; expo++){ //para crear los valores de n
                 time = 0;
                 comp = 0;
                 for(int j = 0; j < repeticiones; j++){ //200 repiticiones por tamaño
                     create("random.txt");	// creates a file
                     write();	// writes random numbers to the file
                     readIntoArray();// reads random numbers into array
-                    printCountOfDuplicate(); //print the count of duplicate
+                    countDuplicates(); //counts how many times a number is repetead
                     time = time + elapsedTime;
                 }
                 time = time / repeticiones;
@@ -89,8 +92,6 @@ public class Ejercicio2_Tabata {
             expo = 0;
         }
         
-        
-        
         return;
     }
      
@@ -101,9 +102,13 @@ public class Ejercicio2_Tabata {
                 break;
             case 1:
                 fileCase = "worstCase.txt";
+                repeticiones = 15;
+                limiteExpo = 14;
                 break;
             case 2:
                 fileCase = "averageCase.txt";
+                repeticiones = 30;
+                limiteExpo = 15;
                 break;
         }
     }
@@ -264,7 +269,7 @@ public class Ejercicio2_Tabata {
         return count;
     }
 
-    private static void printCountOfDuplicate(){        
+    private static void countDuplicates(){        
         key = new ListaEnlazada();
         value = new ListaEnlazada();
         
